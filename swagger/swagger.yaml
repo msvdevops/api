@@ -1,0 +1,981 @@
+---
+swagger: "2.0"
+info:
+  description: "This is a nokia innovation platform Apis.\n"
+  version: "1.0.0"
+  title: "Swagger NIP"
+  termsOfService: "http://api.msv-project.com/terms"
+  contact:
+    name: "devops.msv@gmail.com"
+host: "api.msv-project.com"
+basePath: "/v1"
+schemes:
+- "http"
+- "https"
+security:
+- Bearer: []
+paths:
+  /about:
+    get:
+      tags:
+      - "about"
+      summary: "information about the platform"
+      operationId: "controllers.about_controller.about"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/About"
+      x-tags:
+      - tag: "about"
+  /catalog/services:
+    get:
+      tags:
+      - "catalog"
+      summary: "Get the list of existing service within the platform catalog"
+      operationId: "controllers.catalog_controller.services"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Service"
+      x-tags:
+      - tag: "catalog"
+    post:
+      tags:
+      - "catalog"
+      summary: "register a new service in the catalog"
+      operationId: "controllers.catalog_controller.add_service"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "the service description"
+        required: false
+        schema:
+          $ref: "#/definitions/Service"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Id"
+        400:
+          description: "Invalid info supplied"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "catalog"
+  /catalog/services/{serviceId}:
+    get:
+      tags:
+      - "catalog"
+      summary: "Get service description by service id"
+      operationId: "controllers.catalog_controller.get_service_by_id"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "serviceId"
+        in: "path"
+        description: "The service id that needs to be fetched."
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Service"
+        404:
+          description: "service not found"
+          schema:
+            $ref: "#/definitions/Error"
+      x-tags:
+      - tag: "catalog"
+    put:
+      tags:
+      - "catalog"
+      summary: "Updated service type"
+      description: ""
+      operationId: "controllers.catalog_controller.update_service"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "serviceId"
+        in: "path"
+        description: "The id of the service that will be updated."
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "updated object"
+        required: false
+        schema:
+          $ref: "#/definitions/Service"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Id"
+        400:
+          description: "Invalid service info supplied"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "service not found"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "catalog"
+  /catalog/services/{serviceId}/servicesInstances:
+    get:
+      tags:
+      - "catalog"
+      summary: "Get service instances ids by service id"
+      operationId: "controllers.catalog_controller.get_service_instances_by_service_id"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "serviceId"
+        in: "path"
+        description: "The service id that needs to be fetched."
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ServiceInstance"
+        404:
+          description: "service not found"
+          schema:
+            $ref: "#/definitions/Error"
+      x-tags:
+      - tag: "catalog"
+  /catalog/services/{serviceId}/subcribe:
+    post:
+      tags:
+      - "catalog"
+      summary: "Subscribe to a service from the catalog"
+      operationId: "controllers.catalog_controller.subscribe_to_service"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "serviceId"
+        in: "path"
+        description: "The service id we want to subscribe."
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "the information requiered to instanciate a new service"
+        required: false
+        schema:
+          $ref: "#/definitions/ServiceInfo"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Id"
+        400:
+          description: "Invalid info supplied (if the user is not allowed to subscribe\
+            \ to this service for ex)"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "service not found"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "catalog"
+  /projects/{projectId}:
+    get:
+      tags:
+      - "project"
+      summary: "Get a project by project id"
+      operationId: "controllers.project_controller.get_project_by_id"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectId"
+        in: "path"
+        description: "ID of the project that needs to be fetched"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Project"
+        404:
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "project"
+    put:
+      tags:
+      - "project"
+      summary: "Update a project information"
+      description: "Update a project information with new information"
+      operationId: "controllers.project_controller.update_project"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectId"
+        in: "path"
+        description: "id of the project to update"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "info required for the project definition"
+        required: true
+        schema:
+          $ref: "#/definitions/ServiceInfo"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Id"
+        400:
+          description: "Invalid id supplied"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "project"
+    delete:
+      tags:
+      - "project"
+      summary: "Delete a project"
+      description: "Delete a  project with its id (all project information will be\
+        \ lost)"
+      operationId: "controllers.project_controller.delete_project"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectId"
+        in: "path"
+        description: "ID of project that will be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Id"
+        400:
+          description: "Invalid id supplied"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "project"
+  /projects/{projectId}/serviceInstances:
+    get:
+      tags:
+      - "project"
+      summary: "Get the list of registered service instances for a dedicated project"
+      operationId: "controllers.project_controller.get_service_instances"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectId"
+        in: "path"
+        description: "The id of the project"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ServiceInstance"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "project"
+  /projects/{projectId}/serviceInstances/{serviceInstanceId}:
+    get:
+      tags:
+      - "service"
+      summary: "Find service instance by ID"
+      description: "Returns a service information related to the id given in parameter"
+      operationId: "controllers.service_controller.get_service_instances_by_id"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectId"
+        in: "path"
+        description: "The id of the project"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "serviceInstanceId"
+        in: "path"
+        description: "ID of service instance that needs to be fetched"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ServiceInstance"
+        400:
+          description: "Invalid id supplied"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "service"
+    put:
+      tags:
+      - "service"
+      summary: "Update a service instance information"
+      description: "Update a service instance information with new information"
+      operationId: "controllers.service_controller.update_service_instance"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectId"
+        in: "path"
+        description: "The id of the project"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "serviceInstanceId"
+        in: "path"
+        description: "service instance id to update"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Service info required for the service definition"
+        required: true
+        schema:
+          $ref: "#/definitions/ServiceInfo"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Id"
+        400:
+          description: "Invalid id supplied"
+          schema:
+            $ref: "#/definitions/Error"
+        405:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "service"
+    delete:
+      tags:
+      - "service"
+      summary: "Deletes a service instance"
+      description: "Delete to the service instance (all parameter information will\
+        \ be lost)"
+      operationId: "controllers.service_controller.delete_service_instance"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectId"
+        in: "path"
+        description: "The id of the project"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "serviceInstanceId"
+        in: "path"
+        description: "ID of service instance that will be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Id"
+        400:
+          description: "Invalid id supplied"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "service"
+  /projects/{projectId}/serviceInstances/{serviceInstanceId}/start:
+    get:
+      tags:
+      - "service"
+      summary: "Start the service instance"
+      description: "Start the service instance according to the deployment stategy\
+        \ defined in the service"
+      operationId: "controllers.service_controller.service_instance_start"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectId"
+        in: "path"
+        description: "The id of the project"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "serviceInstanceId"
+        in: "path"
+        description: "ID of service instance that needs to be run"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ServiceInstanceStatus"
+        400:
+          description: "Invalid id supplied"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "service"
+  /projects/{projectId}/serviceInstances/{serviceInstanceId}/stop:
+    get:
+      tags:
+      - "service"
+      summary: "Stop the service instance"
+      description: "Stop the service instance according to the deployment stategy\
+        \ defined in the service"
+      operationId: "controllers.service_controller.service_instance_stop"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectId"
+        in: "path"
+        description: "The id of the project"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "serviceInstanceId"
+        in: "path"
+        description: "ID of service that needs to be run"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ServiceInstanceStatus"
+        400:
+          description: "Invalid id supplied"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "service"
+  /projects/{projectId}/serviceInstances/{serviceInstanceId}/update:
+    get:
+      tags:
+      - "service"
+      summary: "Updates the service instance"
+      description: "Update the service instance with the new data. Repositories will\
+        \ be pulled and new code will be deployed on the platform. If the service\
+        \ is started, the service will be updated with the new business logic ( see\
+        \ continuous deployment strategies)"
+      operationId: "controllers.service_controller.service_instance_update"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "projectId"
+        in: "path"
+        description: "The id of the project"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "serviceInstanceId"
+        in: "path"
+        description: "ID of service instance that will be updated"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ServiceInstanceStatus"
+        400:
+          description: "Invalid id supplied"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "service"
+  /users:
+    get:
+      tags:
+      - "user"
+      summary: "Get the list of existing users"
+      operationId: "controllers.user_controller.get_users"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "user"
+    post:
+      tags:
+      - "user"
+      summary: "Create a user account"
+      operationId: "controllers.user_controller.create_user"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: false
+        schema:
+          $ref: "#/definitions/UserInfo"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Id"
+        400:
+          description: "Invalid user information supplied"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "user"
+  /users/{userId}:
+    get:
+      tags:
+      - "user"
+      summary: "Get user data by user id"
+      operationId: "controllers.user_controller.get_user_by_id"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "The user if that needs to be fetched."
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        404:
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "user"
+    put:
+      tags:
+      - "user"
+      summary: "Updated user"
+      description: ""
+      operationId: "controllers.user_controller.update_user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "The id of the user that will be updated."
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "updated object"
+        required: false
+        schema:
+          $ref: "#/definitions/UserInfo"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Id"
+        400:
+          description: "Invalid user info supplied"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "user"
+    delete:
+      tags:
+      - "user"
+      summary: "Delete a user via its name"
+      operationId: "controllers.user_controller.delete_user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "The id of the user that needs to be deleted"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Id"
+        400:
+          description: "Invalid user id supplied"
+          schema:
+            $ref: "#/definitions/Error"
+        404:
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "user"
+  /users/{userId}/projects:
+    get:
+      tags:
+      - "project"
+      summary: "Get the list of project owned by a dedicated user"
+      operationId: "controllers.project_controller.get_projects"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "The id of the user"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Project"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "project"
+    post:
+      tags:
+      - "project"
+      summary: "Create a project for a user"
+      operationId: "controllers.project_controller.create_project"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "The id of the user"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Created project object"
+        required: false
+        schema:
+          $ref: "#/definitions/ProjectInfo"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Id"
+        400:
+          description: "Invalid user information supplied"
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "project"
+  /users/{userId}/services:
+    get:
+      tags:
+      - "user"
+      summary: "Get the list of services owned by a dedicated user"
+      operationId: "controllers.user_controller.get_services"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "The id of the user"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Service"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "user"
+  /users/{userId}/tokens:
+    get:
+      tags:
+      - "user"
+      summary: "request a token for this user to access to the apis"
+      operationId: "controllers.user_controller.get_tokens"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "The id of the user"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/apiKey"
+      security:
+      - Bearer: []
+      x-tags:
+      - tag: "user"
+securityDefinitions:
+  Bearer:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+definitions:
+  Id:
+    type: "integer"
+    format: "int64"
+  User:
+    type: "object"
+    properties:
+      username:
+        type: "string"
+      password:
+        type: "string"
+        format: "password"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      email:
+        type: "string"
+      userStatus:
+        type: "integer"
+        format: "int32"
+        description: "User Status"
+      services:
+        type: "array"
+        items:
+          $ref: "#/definitions/Service"
+      servicesInstances:
+        type: "array"
+        items:
+          $ref: "#/definitions/ServiceInstance"
+      id:
+        $ref: "#/definitions/Id"
+  UserInfo:
+    type: "object"
+    required:
+    - "password"
+    - "username"
+    properties:
+      username:
+        type: "string"
+      password:
+        type: "string"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      email:
+        type: "string"
+      type:
+        type: "string"
+        enum:
+        - "free_account"
+        - "nokia_partner"
+        default: "free_account"
+  Error:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+  About:
+    type: "object"
+    properties:
+      content:
+        type: "string"
+      version:
+        type: "string"
+  Project:
+    type: "object"
+    required:
+    - "name"
+    properties:
+      name:
+        type: "string"
+  ProjectInfo:
+    type: "object"
+    properties:
+      info:
+        type: "string"
+  Service:
+    type: "object"
+    required:
+    - "name"
+    properties:
+      name:
+        type: "string"
+      description:
+        type: "string"
+      servicePlan:
+        $ref: "#/definitions/ServicePlan"
+      pricingModel:
+        $ref: "#/definitions/PricingModel"
+  ServicePlan:
+    type: "object"
+    properties:
+      region:
+        type: "string"
+        enum:
+        - "France"
+        - "Finland"
+        - "US"
+        - "Japan"
+        default: "France"
+  PricingModel:
+    type: "object"
+    properties:
+      region:
+        type: "string"
+        enum:
+        - "FreeTier"
+        - "Basic"
+        - "Standard"
+        - "Premium"
+        default: "Standard"
+  ServiceInfo:
+    type: "object"
+    required:
+    - "name"
+    properties:
+      name:
+        type: "string"
+        example: "web site"
+      deploymentStage:
+        type: "string"
+        enum:
+        - "prod"
+        - "DevTest"
+        default: "prod"
+      Parameters:
+        type: "array"
+        items:
+          $ref: "#/definitions/KeyValuePair"
+  KeyValuePair:
+    type: "object"
+    properties:
+      key:
+        type: "string"
+      value:
+        type: "string"
+  ServiceInstance:
+    type: "object"
+    properties:
+      serviceInfo:
+        $ref: "#/definitions/ServiceInfo"
+      status:
+        $ref: "#/definitions/ServiceInstanceStatus"
+      serviceId:
+        $ref: "#/definitions/Id"
+      resources:
+        type: "array"
+        items:
+          type: "string"
+  ServiceInstanceStatus:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+        description: "service instance status"
+        enum:
+        - "stopped"
+        - "started"
+        - "updated"
+  apiKey:
+    type: "string"
