@@ -7,7 +7,7 @@ COPY app.py /
 COPY controllers /controllers
 COPY swagger /swagger
 
-EXPOSE 5000
+EXPOSE 8080
 WORKDIR /
 CMD python app.py
 
