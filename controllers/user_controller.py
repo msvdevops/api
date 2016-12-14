@@ -13,8 +13,6 @@ def get_tokens(userId) -> str:
 def get_user_by_id(userId) -> str:
     return 'do some magic!'
 
-@cross_origin(headers=['Content-Type', 'Authorization'])
-@requires_auth ("admin")
 def get_users() -> str:
     return 'do some magic!'
 
