@@ -1,8 +1,3 @@
-from flask_cors import cross_origin
-from controllers.decorators import *
-
-@cross_origin(headers=['Content-Type', 'Authorization'])
-@requires_auth ("admin")
 def create_user(body = None) -> str:
     return 'do some magic!'
 
